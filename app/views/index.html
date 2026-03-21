@@ -1,0 +1,36 @@
+{% extends "layouts/main.html" %} {% set pageName="Home" %} {# 1. The Header
+Slot - This sits OUTSIDE the content block #} {% block header %} {{ super() }}
+{% from
+"node_modules/@ministryofjustice/frontend/moj/components/header/macro.njk"
+import mojHeader %} {{ mojHeader({ organisationLabel: { text: 'TEST', href: '#'
+}, serviceName: 'Manage a caseload', navigation: { label: 'Primary navigation',
+items: [ { text: 'Caseload', href: '#', active: true }, { text: 'Reports', href:
+'#' } ] } }) }} {% endblock %} {# 2. The Content Slot - This is where your
+page-specific info goes #} {% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">Your Caseload</h1>
+    <p class="govuk-body">You are currently managing 12 active cases.</p>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        {# 1. Import the Table Macro (Using your hardcoded path for consistency)
+        #} {% from
+        "node_modules/govuk-frontend/dist/govuk/components/table/macro.njk"
+        import govukTable %} {# 2. Render the Table #} {{ govukTable({ caption:
+        "Active cases", captionClasses: "govuk-table__caption--m",
+        firstCellIsHeader: true, head: [ { text: "Prisoner name" }, { text:
+        "Prison number" }, { text: "Location" }, { text: "Status" } ], rows: [ [
+        { text: "Smith, Joe" }, { text: "A1234BC" }, { text: "Wing A, Cell 1" },
+        { html: '<strong class="govuk-tag govuk-tag--blue">In progress</strong>'
+        } ], [ { text: "Jones, Sam" }, { text: "B5678DE" }, { text: "Wing C,
+        Cell 12" }, { html: '<strong class="govuk-tag govuk-tag--grey"
+          >Pending</strong
+        >' } ], [ { text: "Doe, John" }, { text: "C9012FG" }, { text: "Wing B,
+        Cell 4" }, { html: '<strong class="govuk-tag govuk-tag--green"
+          >Completed</strong
+        >' } ] ] }) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
