@@ -6,15 +6,39 @@ import mojHeader %} {{ mojHeader({ organisationLabel: { text: 'TEST', href: '#'
 }, serviceName: 'Manage a caseload', navigation: { label: 'Primary navigation',
 items: [ { text: 'Caseload', href: '#', active: true }, { text: 'Reports', href:
 '#' } ] } }) }} {% endblock %} {# 2. The Content Slot - This is where your
-page-specific info goes #} {% block content %}
+page-specific info goes #} {% block content %} {% from
+"node_modules/govuk-frontend/dist/govuk/components/input/macro.njk" import
+govukInput %} {% from
+"node_modules/govuk-frontend/dist/govuk/components/button/macro.njk" import
+govukButton %}
+
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-xl">Your Caseload</h1>
     <p class="govuk-body">You are currently managing 12 active cases.</p>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form action="#" method="post">
+      {{ govukInput({ label: { text: "Search by prisoner name or number",
+      classes: "govuk-label--m", isPageHeading: false }, hint: { text: "For
+      example, 'Smith' or 'A1234BC'" }, id: "search-prisoner", name:
+      "search-prisoner", classes: "govuk-input--width-20" }) }} {{ govukButton({
+      text: "Search" }) }}
+    </form>
+  </div>
+</div>
+
+<hr
+  class="govuk-section-break govuk-section-break--l govuk-section-break--visible"
+/>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
-        {# 1. Import the Table Macro (Using your hardcoded path for consistency)
-        #} {% from
+        {% from
         "node_modules/govuk-frontend/dist/govuk/components/table/macro.njk"
         import govukTable %} {# 2. Render the Table #} {{ govukTable({ caption:
         "Active cases", captionClasses: "govuk-table__caption--m",
