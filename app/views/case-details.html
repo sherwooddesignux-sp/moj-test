@@ -1,0 +1,16 @@
+{% extends "layouts/main.html" %} {% set pageName = person.name %} {% block
+header %}{% from
+"node_modules/@ministryofjustice/frontend/moj/components/header/macro.njk"
+import mojHeader %} {{ mojHeader({ organisationLabel: { text: 'Probation Test
+Service', href: '#' }, serviceName: 'Manage a caseload', navigation: { label:
+'Primary navigation', items: [ { text: 'Caseload', href: '#', active: true }, {
+text: 'Reports', href: '#' } ] } }) }} {% endblock %} {% block content %}
+<span class="govuk-caption-l">Case details for {{ person.id }}</span>
+<h1 class="govuk-heading-l">{{ person.name }}</h1>
+{{ govukSummaryList({ rows: [ { key: { text: "Full name" }, value: { text:
+person.name } }, { key: { text: "Prison number" }, value: { text: person.id } },
+{ key: { text: "Current location" }, value: { text: person.location } }, { key:
+{ text: "Status" }, value: { html: '<strong
+  class="govuk-tag govuk-tag--' + person.tag + '"
+  >' + person.status + '</strong
+>' } } ] }) }} {% endblock %}

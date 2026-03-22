@@ -1,5 +1,5 @@
 {% extends "layouts/main.html" %} {% set pageName="Home" %} {% block header %}
-{{ super() }} {% from
+{% from
 "node_modules/@ministryofjustice/frontend/moj/components/header/macro.njk"
 import mojHeader %} {{ mojHeader({ organisationLabel: { text: 'Probation Test
 Service', href: '#' }, serviceName: 'Manage a caseload', navigation: { label:
@@ -131,8 +131,11 @@ govukButton %}
         are picked (an Array), check if person.status is in that array #} {% if
         person.status in data.status %} {% set isMatched = true %} {% endif %}
         {% endif %} {# 2. Only push to the table if they are a match #} {% if
-        isMatched %} {% set tableRows = (tableRows.push([ { text: person.name },
-        { text: person.id }, { text: person.location }, { html: '<strong
+        isMatched %} {% set tableRows = (tableRows.push([ { html: '<a
+          href="/case-details/' + loop.index0 + '"
+          class="govuk-link"
+          >' + person.name + '</a
+        >' }, { text: person.id }, { text: person.location }, { html: '<strong
           class="govuk-tag govuk-tag--' + person.tag + '"
           >' + person.status + '</strong
         >' } ]), tableRows) %} {% endif %} {% endfor %} {# 3. Render the Table

@@ -1,5 +1,7 @@
 {
   "serviceName": "Filters",
   "useServiceNavigation": true,
-  "plugins": ["@ministryofjustice/frontend"]
+  "plugins": ["@ministryofjustice/frontend"],
+  "useHttps": "false",
+  "useAuth": true
 }
