@@ -1,5 +1,5 @@
 {
-  "serviceName": "Search bar",
+  "serviceName": "Filters",
   "useServiceNavigation": true,
   "plugins": ["@ministryofjustice/frontend"]
 }
