@@ -1,12 +1,43 @@
-{% extends "layouts/main.html" %} {% set pageName="Home" %} {# 1. The Header
-Slot - This sits OUTSIDE the content block #} {% block header %} {{ super() }}
-{% from
+{% extends "layouts/main.html" %} {% set pageName="Home" %} {% block header %}
+{{ super() }} {% from
 "node_modules/@ministryofjustice/frontend/moj/components/header/macro.njk"
 import mojHeader %} {{ mojHeader({ organisationLabel: { text: 'Probation Test
 Service', href: '#' }, serviceName: 'Manage a caseload', navigation: { label:
 'Primary navigation', items: [ { text: 'Caseload', href: '#', active: true }, {
-text: 'Reports', href: '#' } ] } }) }} {% endblock %} {# 2. The Content Slot -
-This is where your page-specific info goes #} {% block content %} {% from
+text: 'Reports', href: '#' } ] } }) }}
+
+<style>
+  /* Force MOJ Filter Tag Visibility */
+  .moj-filter-tags {
+    display: block !important;
+    margin-top: 20px;
+  }
+  .moj-filter-tags__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .moj-filter-tags__item {
+    display: inline-block;
+  }
+  .moj-filter-tags__link {
+    background: #f3f2f1;
+    border: 1px solid #b1b4b6;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #0b0c0c;
+    font-size: 16px;
+    border-radius: 4px;
+  }
+  .moj-filter-tags__link:hover {
+    background: #dbdad9;
+  }
+</style>
+
+{% endblock %} {# 2. The Content Slot - This is where your page-specific info
+goes #} {% block content %} {% from
 "node_modules/govuk-frontend/dist/govuk/components/input/macro.njk" import
 govukInput %} {% from
 "node_modules/govuk-frontend/dist/govuk/components/button/macro.njk" import
@@ -14,8 +45,8 @@ govukButton %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-xl">Probation Caseload</h1>
-    <p class="govuk-body">You are currently managing 12 active cases.</p>
+    <h1 class="govuk-heading-xl">Fellowship Probation Caseload</h1>
+    <p class="govuk-body">You are currently managing 9 active cases.</p>
   </div>
 </div>
 
@@ -24,7 +55,7 @@ govukButton %}
     <form action="#" method="post">
       {{ govukInput({ label: { text: "Search by prisoner name or number",
       classes: "govuk-label--m", isPageHeading: false }, hint: { text: "For
-      example, 'Smith' or 'A1234BC'" }, id: "search-prisoner", name:
+      example, 'Gandalf' or 'A1234BC'" }, id: "search-prisoner", name:
       "search-prisoner", classes: "govuk-input--width-20" }) }} {{ govukButton({
       text: "Search" }) }}
     </form>
@@ -36,16 +67,53 @@ govukButton %}
 />
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-third">
-    {% from
-    "node_modules/govuk-frontend/dist/govuk/components/checkboxes/macro.njk"
-    import govukCheckboxes %} {{ govukCheckboxes({ idPrefix: "status", name:
-    "status", classes: "govuk-checkboxes--small", fieldset: { legend: { text:
-    "Status", isPageHeading: false, classes: "govuk-fieldset__legend--m" } },
-    items: [ { value: "progress", text: "In progress" }, { value: "pending",
-    text: "Pending" }, { value: "completed", text: "Completed" } ] }) }} {% from
-    "node_modules/govuk-frontend/dist/govuk/components/button/macro.njk" import
-    govukButton %} {{ govukButton({ text: "Apply filters", classes:
-    "govuk-button--secondary" }) }}
+    <form action="/index" method="post">
+      {% from
+      "node_modules/govuk-frontend/dist/govuk/components/checkboxes/macro.njk"
+      import govukCheckboxes %} {{ govukCheckboxes({ idPrefix: "status", name:
+      "status", classes: "govuk-checkboxes--small", fieldset: { legend: { text:
+      "Status", classes: "govuk-fieldset__legend--m" } }, items: [ { value: "In
+      progress", text: "In progress", checked: true if data.status and "In
+      progress" in data.status }, { value: "Pending", text: "Pending", checked:
+      true if data.status and "Pending" in data.status }, { value: "Completed",
+      text: "Completed", checked: true if data.status and "Completed" in
+      data.status }, { value: "Urgent", text: "Urgent", checked: true if
+      data.status and "Urgent" in data.status } ] }) }} {% from
+      "node_modules/govuk-frontend/dist/govuk/components/button/macro.njk"
+      import govukButton %} {{ govukButton({ text: "Apply filters", classes:
+      "govuk-button--secondary" }) }}
+    </form>
+    {# 1. More robust check: Does status exist and is it not empty? #} {% if
+    data.status and data.status != "" %}
+    <div class="moj-filter-tags govuk-!-margin-bottom-4">
+      <h2 class="govuk-heading-s">Applied filters</h2>
+      <ul class="moj-filter-tags__list">
+        {# 2. We use a 'caller' approach to handle both Strings and Arrays #} {%
+        if data.status.constructor.name == 'String' %} {# If it's a single
+        string, just show one tag #}
+        <li class="moj-filter-tags__item">
+          <a class="moj-filter-tags__link" href="?status=">
+            <span class="govuk-visually-hidden">Remove this filter</span> {{
+            data.status }}
+          </a>
+        </li>
+        {% else %} {# If it's an array, loop through them #} {% for item in
+        data.status %}
+        <li class="moj-filter-tags__item">
+          <a class="moj-filter-tags__link" href="#">
+            <span class="govuk-visually-hidden">Remove this filter</span> {{
+            item }}
+          </a>
+        </li>
+        {% endfor %} {% endif %}
+      </ul>
+      <p class="govuk-body">
+        <a href="?status=" class="govuk-link govuk-link--no-visited-state"
+          >Clear all filters</a
+        >
+      </p>
+    </div>
+    {% endif %}
   </div>
   <div class="govuk-grid-column-two-thirds">
     <div class="govuk-grid-row">
@@ -53,13 +121,23 @@ govukButton %}
         {% from
         "node_modules/govuk-frontend/dist/govuk/components/table/macro.njk"
         import govukTable %} {% set tableRows = [] %} {% for person in
-        data.cases %} {% set tableRows = (tableRows.push([ { text: person.name
-        }, { text: person.id }, { text: person.location }, { html: '<strong
+        data.cases %} {# 1. Create a helper variable to see if this specific
+        person matches the user's choice #} {% set isMatched = false %} {% if
+        not data.status or data.status == "" %} {# If no filters are selected,
+        everyone is a match #} {% set isMatched = true %} {% elseif
+        data.status.constructor.name == 'String' %} {# If only one filter is
+        picked, check that string #} {% if data.status == person.status %} {%
+        set isMatched = true %} {% endif %} {% else %} {# If multiple filters
+        are picked (an Array), check if person.status is in that array #} {% if
+        person.status in data.status %} {% set isMatched = true %} {% endif %}
+        {% endif %} {# 2. Only push to the table if they are a match #} {% if
+        isMatched %} {% set tableRows = (tableRows.push([ { text: person.name },
+        { text: person.id }, { text: person.location }, { html: '<strong
           class="govuk-tag govuk-tag--' + person.tag + '"
           >' + person.status + '</strong
-        >' } ]), tableRows) %} {% endfor %} {{ govukTable({ head: [ { text:
-        "Name" }, { text: "ID" }, { text: "Location" }, { text: "Status" } ],
-        rows: tableRows }) }}
+        >' } ]), tableRows) %} {% endif %} {% endfor %} {# 3. Render the Table
+        #} {{ govukTable({ head: [ { text: "Name" }, { text: "ID" }, { text:
+        "Location" }, { text: "Status" } ], rows: tableRows }) }}
       </div>
     </div>
   </div>
